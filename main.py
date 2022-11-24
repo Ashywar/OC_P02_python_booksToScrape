@@ -1,31 +1,123 @@
 import requests
 from bs4 import BeautifulSoup
 import csv
+import os
 
 
-url = "http://books.toscrape.com/index.html"
-page = requests.get(url)
+# Récupération des données d'une page 
 
-# Voir le code html source
+# Création de fonction pour chaque données requises:
 
-soup = BeautifulSoup(page.content, 'html.parser')
+#UPC
+def upc_page(soup):
+    tds = soup.findAll("td")
+    upc = tds[0].text
+    return upc
 
-titres = soup.find_all("h3")
-prices = soup.find_all("p", class_="price_color")
+#Titre
+def title_page(soup):
+    title = soup.h1.text
+    return title
 
-titre_text = []
+#Prix Inclus Taxe
+def price_inc_tax_page(soup):
+    tds = soup.findAll("td")
+    price = tds[3].text
+    return price
 
-for titre in titres:
-    titre_text.append(titre.string)
+#Prix Exclus Taxe
+def price_excl_tax_page(soup):
+    tds = soup.findAll("td")
+    price = tds[2].text
+    return price
 
-price_text = []
+#Disponibilité
+def available_page(soup):
+    tds = soup.findAll("td")
+    available = tds[5].text
+    num_list = []
+    for num in available:   
+        if num.isdigit():
+            num_list.append(num)
+            continue
+    num_available = "".join(num_list)
+    return num_available
 
-for price in prices:
-    price_text.append(price.string)
+#Description
+def description_page(soup):
+    p_soup = soup.findAll("p")
+    description = p_soup[3].text
+    return description
+    
+#Categorie
+def category_page(soup):
+    ul = soup.find("ul", class_="breadcrumb")
+    ul_list = list(ul)[5]
+    category = ul_list.text.strip()
+    return category 
 
-header = ['titre, prix']    
-with open('csv_file.csv', "w") as csv_file:
-    writer = csv.writer(csv_file, delimiter=',')
-    writer.writerow(header)
-    for titre, price in zip(titre_text, price_text):
-        writer.writerow([titre, price])
+#Avis 
+def review_page(soup):
+    star_soup = soup.find("p", class_="star-rating")
+    star_str = str(star_soup)
+        
+    if "One" in star_str:
+        star = "1 star"
+    elif "Two" in star_str:
+        star = "2 stars"
+    elif "Three" in star_str:
+        star = "3 stars"
+    elif "Four" in star_str:
+        star = "4 stars"   
+    elif "Five" in star_str:
+        star = "5 stars"
+    else:
+        star = "No star"
+    return star
+
+#Image Url
+def image_url(soup):
+    image_soup = soup.find("div", class_="item active")
+    image = image_soup.find("img", src=True)
+    url_soup  = image.get("src")
+    url = "http://books.toscrape.com" + url_soup[5:]
+    return url
+
+
+
+# Scraping d'une page spécifique au choix
+page_url = "http://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
+page_scrap_list = [page_url]
+
+
+# Requests URL
+result = requests.get(page_url)
+
+if result.ok:
+    soup = BeautifulSoup(result.content, "html.parser")
+ 
+    page_scrap_list.append(upc_page(soup))
+    page_scrap_list.append(title_page(soup))
+    page_scrap_list.append(price_inc_tax_page(soup))
+    page_scrap_list.append(price_excl_tax_page(soup))
+    page_scrap_list.append(available_page(soup))
+    page_scrap_list.append(description_page(soup))
+    page_scrap_list.append(category_page(soup))
+    page_scrap_list.append(review_page(soup))
+    page_scrap_list.append(image_url(soup))
+
+
+# Création du dossier /data 
+try:
+    os.mkdir("data")
+except os.error:
+    pass
+
+
+# Ecriture des données de la liste page_scrap_list dans un dossier csv / avec en tête
+with open("data/csv_" + str.lower(title_page(soup)) + ".csv", "w", encoding='utf-8') as f:
+    en_tete = ["URL", "UPC", "Title", "Price Tax Inc", "Price Tax Exc", "Available", "Description", "Category", "Review", "Image"]
+    dw = csv.DictWriter(f, delimiter=",", fieldnames=en_tete)
+    dw.writeheader()
+    writer = csv.writer(f, delimiter=",")
+    writer.writerow(page_scrap_list)
