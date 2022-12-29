@@ -26,7 +26,8 @@ def title_page(soup):
 
 def price_inc_tax_page(soup):
     tds = soup.findAll("td")
-    price = tds[3].text.replace("Â", "")
+    price = tds[3].text.replace(
+        "Â", "")
     return price
 
 # Prix Exclus Taxe
@@ -34,7 +35,8 @@ def price_inc_tax_page(soup):
 
 def price_excl_tax_page(soup):
     tds = soup.findAll("td")
-    price = tds[2].text.replace("Â", "")
+    price = tds[2].text.replace(
+        "Â", "")
     return price
 
 # Disponibilité
