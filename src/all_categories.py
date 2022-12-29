@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from scrap_part_2 import scrap_category
+from one_category import scrap_category
 import os
 
 # Récupération des données de toutes les catégories
