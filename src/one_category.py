@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import csv
-from scrap_part_1 import upc_page,  title_page, price_inc_tax_page, price_excl_tax_page, available_page, description_page, category_page, review_page, image_url
+from one_book import upc_page,  title_page, price_inc_tax_page, price_excl_tax_page, available_page, description_page, category_page, review_page, image_url
 import os
 
 
