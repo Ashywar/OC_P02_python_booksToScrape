@@ -1,0 +1,6 @@
+env/
+csv/
+books_images/
+books_info/
+gitStatus.txt
+__pycache__
