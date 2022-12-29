@@ -122,15 +122,15 @@ if result.ok:
     page_scrap_list.append(image_url(soup))
 
 
-# Création du dossier /data
+# Création du dossier /book_info
 try:
-    os.mkdir("data")
+    os.mkdir("book_info")
 except os.error:
     pass
 
 
 # Ecriture des données de la liste page_scrap_list dans un dossier csv / avec en tête
-with open("data/csv_" + str.lower(title_page(soup)) + ".csv", "w", encoding='utf-8') as f:
+with open("book_info/csv_" + str.lower(title_page(soup)) + ".csv", "w", encoding='utf-8') as f:
     en_tete = ["URL", "UPC", "Title", "Price Tax Inc", "Price Tax Exc",
                "Available", "Description", "Category", "Review", "Image"]
     dw = csv.DictWriter(f, delimiter=",", fieldnames=en_tete)

@@ -3,8 +3,8 @@ from bs4 import BeautifulSoup
 from scrap_part_2 import scrap_category
 import os
 
+# Récupération des données de toutes les catégories
 
- 
 general_url = "http://books.toscrape.com/index.html"
 reponse = requests.get(general_url)
 category_main_url = []
@@ -21,10 +21,9 @@ if reponse.ok:
             category_main_url.append(categories_url)
 
 try:
-    os.mkdir("data")
+    os.mkdir("book_info")
 except os.error:
     pass
 
-for link in category_main_url: 
+for link in category_main_url:
     scrap_category(link)
-
