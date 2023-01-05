@@ -17,7 +17,7 @@
 `pip freeze`
 
 # Execution des scripts
-il y a  quatre scripts distincts concernant chacune des étapes demandées.
+Il y a  quatre scripts distincts concernant chacune des étapes demandées.
 
 
 ## Scraping article 
